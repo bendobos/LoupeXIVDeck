@@ -41,6 +41,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Loupedeck\Loupedeck2\PluginApi.dll</HintPath>
     </Reference>
+    <Reference Include="StructureMap, Version=4.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\StructureMap.4.7.1\lib\net45\StructureMap.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Reactive, Version=4.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
@@ -79,10 +82,13 @@
     <Compile Include="Commands\FFXIVHotbarButtonCommand.cs" />
     <Compile Include="Commands\FFXIVMacroCommand.cs" />
     <Compile Include="Commands\FFXIVTextCommandCommand.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="FFXIVApi.cs" />
-    <Compile Include="FFXIVGameTypes.cs" />
-    <Compile Include="FFXIVPluginLink.cs" />
+    <Compile Include="Resources\Constants.cs" />
+    <Compile Include="FFXIVLink\FFXIVApi.cs" />
+    <Compile Include="FFXIVLink\Models\FFXIVGameTypes.cs" />
+    <Compile Include="FFXIVLink\FFXIVPluginLink.cs" />
+    <Compile Include="FFXIVLink\FFXIVRegistry.cs" />
+    <Compile Include="FFXIVLink\Models\IFFXIVApi.cs" />
+    <Compile Include="FFXIVLink\Models\IFFXIVPluginLink.cs" />
     <Compile Include="Messages\Inbound\InitReply.cs" />
     <Compile Include="Messages\Outbound\InitOpCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -97,10 +103,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Assets\icon_16.png" />
-    <EmbeddedResource Include="Assets\icon_256.png" />
-    <EmbeddedResource Include="Assets\icon_32.png" />
-    <EmbeddedResource Include="Assets\icon_48.png" />
+    <EmbeddedResource Include="Resources\Icons\icon_16.png" />
+    <EmbeddedResource Include="Resources\Icons\icon_256.png" />
+    <EmbeddedResource Include="Resources\Icons\icon_32.png" />
+    <EmbeddedResource Include="Resources\Icons\icon_48.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

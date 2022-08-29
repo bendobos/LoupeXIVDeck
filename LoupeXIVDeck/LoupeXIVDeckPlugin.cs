@@ -2,43 +2,53 @@ namespace Loupedeck.LoupeXIVDeckPlugin
 {
     using System;
 
+    using StructureMap;
+
     public class LoupeXIVDeckPlugin : Plugin
     {
-        // Make application dynamic and not bound to a specific process
+        private IDisposable isApplicationReadySubscription;
+
         public override Boolean HasNoApplication => true;
         public override Boolean UsesApplicationApiOnly => true;
+        public Container container;
 
-        public static FFXIVPluginLink pluginLink = new FFXIVPluginLink();
-        public static FFXIVApi api;
+        public LoupeXIVDeckPlugin() {
+            this.SetupDiContainer();
+        }
 
         public override void Load()
         {
             this.SetIcons();
 
-            LoupeXIVDeckPlugin.pluginLink.isApplicationReadySubject.Subscribe(isReady =>
-            {
-                System.Diagnostics.Debug.WriteLine($"## Received isReady state: {isReady}");
+            this.SetupFFXIVConnection();
+        }
 
+        private void SetupDiContainer()
+        {
+            this.container = new Container(new FFXIVRegistry());
+        }
+
+        private void SetupFFXIVConnection()
+        {
+            var pluginLink = this.container.GetInstance<IFFXIVPluginLink>();
+
+            this.isApplicationReadySubscription = pluginLink.GetIsApplicationReadySubject().Subscribe(isReady =>
+            {
                 if (isReady)
                 {
-                    LoupeXIVDeckPlugin.api = new FFXIVApi();
-
                     this.OnPluginStatusChanged(Loupedeck.PluginStatus.Normal, null, null, null);
-                } else
+                }
+                else
                 {
-                    this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error,
-                        "No connection to Game Plugin Websocket. " +
-                        "Make sure you have the XIVDeck Game Plugin installed and the port set to default (37984). " +
-                        "Retrying connection every 30 seconds...",
-                        "https://github.com/KazWolfe/XIVDeck",
-                        "See XIVDeck Github for instructions"
-                    );
+                    this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, 
+                        Constants.NO_CONNECTION_ERROR_MESSAGE, 
+                        Constants.SUPPORT_URL, 
+                        Constants.SUPPORT_URL_TITLE);
                 }
             });
 
-            // Only connect after isApplicationReadySubject subscription is available,
-            // otherwise it won't be triggered (i.e. if connecting in the constructor if FFXIVPluginLink.
-            LoupeXIVDeckPlugin.pluginLink.Connect();
+            // Only connect after isApplicationReadySubject subscription is available
+            pluginLink.Connect();
         }
 
         private void SetIcons()
@@ -51,6 +61,7 @@ namespace Loupedeck.LoupeXIVDeckPlugin
 
         public override void Unload()
         {
+            this.isApplicationReadySubscription.Dispose();
         }
 
         private void OnApplicationStarted(Object sender, EventArgs e)

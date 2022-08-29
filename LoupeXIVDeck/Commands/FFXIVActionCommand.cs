@@ -7,18 +7,26 @@
 
     public class FFXIVActionCommand : PluginDynamicCommand
     {
-        private readonly IDisposable isApplicationReadySubscription;
+        private IFFXIVPluginLink _pluginLink;
+        private IFFXIVApi _api;
+        private IDisposable isApplicationReadySubscription;
         private Boolean isApplicationReady;
 
         public FFXIVActionCommand() : base("Execute Action", "Execute Action", "FFXIV Commands")
         {
             this.MakeProfileAction("text;<ActionType>:<ActionId> (e.g. Macro:2)");
+        }
 
-            this.isApplicationReadySubscription = LoupeXIVDeckPlugin.pluginLink.isApplicationReadySubject
+        protected override Boolean OnLoad() {
+            this.GetInstances();
+
+            this.isApplicationReadySubscription = this._pluginLink.GetIsApplicationReadySubject()
                 .Subscribe(ready => {
                     this.isApplicationReady = ready;
                     this.ActionImageChanged();
                 });
+
+            return true;
         }
 
         protected override BitmapImage GetCommandImage(String actionParameter, PluginImageSize imageSize)
@@ -27,9 +35,9 @@
             {
                 var action = this.ActionParameterToFFXIVAction(actionParameter);
 
-                var result = Task.Run(async () => await LoupeXIVDeckPlugin.api.GetAction(action.type, action.id)).Result;
+                var result = Task.Run(async () => await this._api.GetAction(action.type, action.id)).Result;
 
-                var icon = Task.Run(async () => await LoupeXIVDeckPlugin.api.GetIcon(result.iconId));
+                var icon = Task.Run(async () => await this._api.GetIcon(result.iconId));
 
                 return BitmapImage.FromArray(icon.Result);
             }
@@ -43,7 +51,7 @@
             {
                 var action = this.ActionParameterToFFXIVAction(actionParameter);
 
-                await LoupeXIVDeckPlugin.api.ExecuteAction(action.type, action.id);
+                await this._api.ExecuteAction(action.type, action.id);
             }
         }
 
@@ -61,6 +69,14 @@
             this.isApplicationReadySubscription.Dispose();
 
             return base.OnUnload();
+        }
+        private void GetInstances()
+        {
+            var plugin = (LoupeXIVDeckPlugin)base.Plugin;
+            var container = plugin.container;
+
+            this._pluginLink = container.GetInstance<IFFXIVPluginLink>();
+            this._api = container.GetInstance<IFFXIVApi>();
         }
     }
 }

@@ -5,26 +5,35 @@
 
     internal class FFXIVMacroCommand : PluginDynamicCommand
     {
-        private readonly IDisposable isApplicationReadySubscription;
+        private IFFXIVPluginLink _pluginLink;
+        private IFFXIVApi _api;
+        private IDisposable isApplicationReadySubscription;
         private Boolean isApplicationReady;
 
         public FFXIVMacroCommand() : base("Execute Macro", "Execute Macro", "FFXIV Commands")
         {
             this.MakeProfileAction("text;Macro ID");
-
-            this.isApplicationReadySubscription = LoupeXIVDeckPlugin.pluginLink.isApplicationReadySubject
-                .Subscribe(ready => { 
-                    this.isApplicationReady = ready; 
-                    this.ActionImageChanged(); 
-                });
         }
+
+        protected override Boolean OnLoad() { 
+            this.GetInstances();
+
+            this.isApplicationReadySubscription = this._pluginLink.GetIsApplicationReadySubject()
+                .Subscribe(ready => {
+                    this.isApplicationReady = ready;
+                    this.ActionImageChanged();
+                });
+
+            return true;
+        }
+
         protected override BitmapImage GetCommandImage(String actionParameter, PluginImageSize imageSize)
         {
             if (actionParameter != null && this.isApplicationReady)
             {
-                var result = Task.Run(async () => await LoupeXIVDeckPlugin.api.GetAction("Macro", Int32.Parse(actionParameter))).Result;
+                var result = Task.Run(async () => await this._api.GetAction("Macro", Int32.Parse(actionParameter))).Result;
 
-                var icon = Task.Run(async () => await LoupeXIVDeckPlugin.api.GetIcon(result.iconId));
+                var icon = Task.Run(async () => await this._api.GetIcon(result.iconId));
 
                 return BitmapImage.FromArray(icon.Result);
             }
@@ -36,7 +45,7 @@
         {
             if (this.isApplicationReady)
             {
-                await LoupeXIVDeckPlugin.api.ExecuteAction("Macro", Int32.Parse(actionParameter));
+                await this._api.ExecuteAction("Macro", Int32.Parse(actionParameter));
             }
         }
 
@@ -45,6 +54,15 @@
             this.isApplicationReadySubscription.Dispose();
 
             return base.OnUnload();
+        }
+
+        private void GetInstances()
+        {
+            var plugin = (LoupeXIVDeckPlugin)base.Plugin;
+            var container = plugin.container;
+
+            this._pluginLink = container.GetInstance<IFFXIVPluginLink>();
+            this._api = container.GetInstance<IFFXIVApi>();
         }
     }
 }

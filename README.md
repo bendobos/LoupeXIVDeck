@@ -1,8 +1,8 @@
-![LoupeFFXIVDeckIcon](LoupeXIVDeck/Assets/icon_256.png)
+![LoupeFFXIVDeckIcon](LoupeXIVDeck/Resources/Icons/icon_256.png)
 
 # LoupeXIVDeck
 
-A LoupeDeck plugin for [XIVDeck](https://github.com/KazWolfe/XIVDeck/blob/main/README.md).
+A LoupeDeck plugin for [XIVDeck](https://github.com/KazWolfe/XIVDeck/blob/main/README.md) by @KazWolfe.
 
 > ⚠️ This project currently is "unofficial" and the LoupeDeck pretends to be a Stream Deck in order to interface with the game.
 > 
@@ -22,13 +22,14 @@ LoupeXIVDeck supports the same commands as the Stream Deck plugin by @KazWolfe, 
 ## TODO / Known Issues
 
 * Add proper error and exception handling. For example, the plugin might currently crash if IDs for actions are given that are out of bounds.
-* Try to use Dependency Injection so that instances don't have to managed manually. As it seems, there are some limitations with the LoupeDeckSDK and DI, which will have to be explored.
-* Improve usability for Action and Class commands by using `GetClasses` and `GetActions.
+* Improve usability for Action and Class commands by using `GetClasses` and `GetActions`.
+* Changing the WebSocket port is currently not supported, so make sure you use the XIVDeck default port. 
 * Add some pictures and examples to this repo.
 
 ## Using the Plugin
 
-Install this plugin via the LoupeDeck software. Also install the XIVDeck Game Plugin as explained on the [XIVDeck Github page](https://github.com/KazWolfe/XIVDeck/blob/main/README.md#installing-the-plugin).
-
-Changing the WebSocket port is currently not supported, so make sure you use the XIVDeck default port. 
+1. Install the XIVDeck Game Plugin as explained on the [XIVDeck Github page](https://github.com/KazWolfe/XIVDeck/blob/main/README.md#installing-the-plugin).
+2. Download the [latest release](https://github.com/bendobos/LoupeXIVDeck/releases) of this plugin.
+3. In your LoupeDeck software, go to: `Click User Profile` -> `Plugins and Assets` -> `Install Plugin` and wait until the plugin is installed.
+4. You are ready to go! Add commands from LoupeXIVDeck anywhere you need them.
 

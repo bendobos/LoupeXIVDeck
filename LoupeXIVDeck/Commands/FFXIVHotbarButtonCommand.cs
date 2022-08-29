@@ -9,18 +9,27 @@
 
     public class FFXIVHotbarButtonCommand : PluginDynamicCommand
     {
-        private readonly IDisposable isApplicationReadySubscription;
+        private IFFXIVPluginLink _pluginLink;
+        private IFFXIVApi _api;
+        private IDisposable isApplicationReadySubscription;
         private Boolean isApplicationReady;
 
         public FFXIVHotbarButtonCommand() : base("Press Hotbar Button", "Press Hotbar Button", "FFXIV Commands")
         {
             this.MakeProfileAction("text;<HotbarID>:<SlotID> (e.g. 0:4)");
+        }
 
-            this.isApplicationReadySubscription = LoupeXIVDeckPlugin.pluginLink.isApplicationReadySubject
+        protected override Boolean OnLoad()
+        {
+            this.GetInstances();
+
+            this.isApplicationReadySubscription = this._pluginLink.GetIsApplicationReadySubject()
                 .Subscribe(ready => {
                     this.isApplicationReady = ready;
                     this.ActionImageChanged();
                 });
+
+            return true;
         }
 
         async protected override void RunCommand(String actionParameter)
@@ -29,7 +38,7 @@
             {
                 var hotbarSlot = this.ActionParameterToHotbarSlot(actionParameter);
 
-                await LoupeXIVDeckPlugin.api.TriggerHotbarSlot(hotbarSlot.hotbarId, hotbarSlot.slotId);
+                await this._api.TriggerHotbarSlot(hotbarSlot.hotbarId, hotbarSlot.slotId);
             }
         }
 
@@ -41,7 +50,7 @@
 
                 // The following is a bit ugly but we need to work with async data in a sync function
 
-                var task = Task.Run(async () => await LoupeXIVDeckPlugin.api.GetHotbarSlot(hotbarSlot.hotbarId, hotbarSlot.slotId));
+                var task = Task.Run(async () => await this._api.GetHotbarSlot(hotbarSlot.hotbarId, hotbarSlot.slotId));
 
                 var resultContent = Task.Run(async () => await task.Result.Content.ReadAsStringAsync());
 
@@ -68,6 +77,15 @@
             this.isApplicationReadySubscription.Dispose();
 
             return base.OnUnload();
+        }
+
+        private void GetInstances()
+        {
+            var plugin = (LoupeXIVDeckPlugin)base.Plugin;
+            var container = plugin.container;
+
+            this._pluginLink = container.GetInstance<IFFXIVPluginLink>();
+            this._api = container.GetInstance<IFFXIVApi>();
         }
     }
 
