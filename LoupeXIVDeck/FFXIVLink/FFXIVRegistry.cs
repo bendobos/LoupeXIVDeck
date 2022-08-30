@@ -6,8 +6,8 @@
     {
         public FFXIVRegistry()
         {
-            this.For<IFFXIVPluginLink>().Use<FFXIVPluginLink>();
-            this.For<IFFXIVApi>().Use<FFXIVApi>();
+            this.For<IFFXIVPluginLink>().Use<FFXIVPluginLink>().Singleton();
+            this.For<IFFXIVApi>().Use<FFXIVApi>().Singleton();
         }
     }
 }

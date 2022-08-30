@@ -13,31 +13,29 @@
 
     public class FFXIVPluginLink : IFFXIVPluginLink
     {
-        public static Int32 port = 37984;
-        public static String apiKey = "";
-        public Boolean isApplicationReady = false;
-        public static Subject<Boolean> isApplicationReadySubject = new Subject<Boolean>();
-
+        private readonly Int32 port = 37984;
+        private readonly Subject<Boolean> isApplicationReadySubject = new Subject<Boolean>();
+        private String apiKey = "";
         private WebsocketClient client;
 
         public String GetBaseUrl()
         {
-            return $"http://localhost:{port}";
+            return $"http://localhost:{this.port}";
         }
 
         public String GetApiKey()
         {
-            return apiKey;
+            return this.apiKey;
         }
 
         public Subject<Boolean> GetIsApplicationReadySubject()
         {
-            return FFXIVPluginLink.isApplicationReadySubject;
+            return this.isApplicationReadySubject;
         }
 
         async public void Connect()
         {
-            var url = new Uri($"ws://localhost:{FFXIVPluginLink.port}/ws");
+            var url = new Uri($"ws://localhost:{this.port}/ws");
 
             this.client = new WebsocketClient(url);
             this.client.ReconnectTimeout = Constants.WEBSOCKET_RECONNECT_TIMEOUT;
@@ -58,7 +56,7 @@
                 // NoMessageReceived will reconnect automatically.
                 if (info.Type != DisconnectionType.NoMessageReceived)
                 {
-                    FFXIVPluginLink.isApplicationReadySubject.OnNext(false);
+                    this.isApplicationReadySubject.OnNext(false);
                 }
             });
 
@@ -103,10 +101,10 @@
             System.Diagnostics.Debug.WriteLine($"## Received initReply: {msg}");
             var initReply = JsonConvert.DeserializeObject<InitReply>(msg.ToString());
 
-            FFXIVPluginLink.apiKey = initReply.apiKey;
-            System.Diagnostics.Debug.WriteLine($"## Got an API key: {FFXIVPluginLink.apiKey}");
+            this.apiKey = initReply.apiKey;
+            System.Diagnostics.Debug.WriteLine($"## Got an API key: {this.apiKey}");
 
-            FFXIVPluginLink.isApplicationReadySubject.OnNext(true);
+            this.isApplicationReadySubject.OnNext(true);
         }
     }
 }

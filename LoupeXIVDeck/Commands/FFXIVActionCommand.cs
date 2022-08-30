@@ -1,6 +1,7 @@
 ﻿namespace Loupedeck.LoupeXIVDeckPlugin.commands
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     using static Loupedeck.LoupeXIVDeckPlugin.FFXIVGameTypes;
@@ -14,7 +15,7 @@
 
         public FFXIVActionCommand() : base("Execute Action", "Execute Action", "FFXIV Commands")
         {
-            this.MakeProfileAction("text;<ActionType>:<ActionId> (e.g. Macro:2)");
+            this.MakeProfileAction("tree");
         }
 
         protected override Boolean OnLoad() {
@@ -27,6 +28,28 @@
                 });
 
             return true;
+        }
+
+        protected override PluginProfileActionData GetProfileActionData() {
+            var actions = Task.Run(async () => await this._api.GetActions());
+            var tree = new PluginProfileActionTree("Select Action:");
+
+            var actionsObj = JsonHelpers.DeserializeAnyObject<Dictionary<String, List<FFXIVAction>>>(actions.Result);
+
+            tree.AddLevel("Action Type");
+            tree.AddLevel("Action");
+
+            foreach (var actionType in actionsObj)
+            {
+                var node = tree.Root.AddNode(actionType.Key);
+
+                foreach (var action in actionType.Value)
+                {
+                    node.AddItem($"{action.type}:{action.id}", action.name);
+                }
+            }
+
+            return tree;
         }
 
         protected override BitmapImage GetCommandImage(String actionParameter, PluginImageSize imageSize)
@@ -60,6 +83,8 @@
          */
         private FFXIVAction ActionParameterToFFXIVAction(String actionParameter)
         {
+            System.Diagnostics.Debug.WriteLine(actionParameter);
+
             var paramArray = actionParameter.Split(':');
 
             return new FFXIVAction(paramArray[0], Int32.Parse(paramArray[1]));

@@ -7,7 +7,7 @@
     {
         Task<System.Boolean> ExecuteAction(System.String type, System.Int32 id);
         Task<FFXIVGameTypes.FFXIVAction> GetAction(System.String type, System.Int32 id);
-        Task<System.Boolean> GetActions();
+        Task<System.String> GetActions();
         Task<FFXIVGameTypes.FFXIVClass> GetClass(System.Int32 classId);
         Task<HttpResponseMessage> GetHotbarSlot(System.Int32 hotbarId, System.Int32 slotId);
         Task<System.Byte[]> GetIcon(System.Int32 iconId, System.Boolean hq = false);

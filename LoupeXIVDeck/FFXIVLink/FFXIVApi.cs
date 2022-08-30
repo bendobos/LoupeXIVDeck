@@ -31,7 +31,6 @@
                     );
                 }
             });
-
         }
 
         async public Task<Byte[]> GetIcon(Int32 iconId, Boolean hq = false)
@@ -62,6 +61,13 @@
             var response = await this.client.PostAsync($"{this.baseUrl}/hotbar/{hotbarId}/{slotId}/execute", new StringContent(""));
 
             return response.IsSuccessStatusCode;
+        }
+
+        async public Task<String> GetActions()
+        {
+            var response = await this.client.GetAsync($"{this.baseUrl}/action");
+            
+            return await response.Content.ReadAsStringAsync();
         }
 
         async public Task<FFXIVAction> GetAction(String type, Int32 id)
