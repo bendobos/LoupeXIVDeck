@@ -88,20 +88,17 @@
 
         private void SendInit(WebsocketClient client)
         {
+            // See https://github.com/KazWolfe/XIVDeck/issues/27#issuecomment-1230915053
             var opCode = new InitOpCode
             {
-                Version = "0.2.13",
-                Mode = "Plugin"
+                Version = "0.2.9999",
+                Mode = "Developer"
             };
 
-            // Sends a fake version so no errors come up
             var initMessage = JsonHelpers.SerializeAnyObject(opCode);
-            var initMessage2 = JsonHelpers.SerializeAnyObject(opCode);
-
             System.Diagnostics.Debug.WriteLine($"## Sending Message: {initMessage}");
-            System.Diagnostics.Debug.WriteLine($"## Sending Message: {initMessage2}");
-
-            var result = Task.Run(() => client.Send(initMessage));
+            
+            Task.Run(() => client.Send(initMessage));
         }
 
         private void OnInitReceive(ResponseMessage msg)
