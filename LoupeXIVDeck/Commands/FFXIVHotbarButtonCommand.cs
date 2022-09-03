@@ -3,8 +3,6 @@
     using System;
     using System.Threading.Tasks;
 
-    using Newtonsoft.Json;
-
     using static Loupedeck.LoupeXIVDeckPlugin.FFXIVGameTypes;
 
     public class FFXIVHotbarButtonCommand : PluginDynamicCommand
@@ -54,7 +52,7 @@
 
                 var resultContent = Task.Run(async () => await task.Result.Content.ReadAsStringAsync());
 
-                hotbarSlot = JsonConvert.DeserializeObject<FFXIVHotbarSlot>(resultContent.Result);
+                hotbarSlot = JsonHelpers.DeserializeObject<FFXIVHotbarSlot>(resultContent.Result);
 
                 // The iconData need to be split because having `data:image/png;base64,` in it is not allowed
                 return BitmapImage.FromArray(Convert.FromBase64String(hotbarSlot.iconData.Split(',')[1]));

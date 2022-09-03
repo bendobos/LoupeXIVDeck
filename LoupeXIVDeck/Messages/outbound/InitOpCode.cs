@@ -3,14 +3,8 @@
     using System;
     public class InitOpCode
     {
-        public String opcode = "init";
-        public String version;
-        public String mode;
-
-        public InitOpCode(String version, String mode)
-        {
-            this.version = version;
-            this.mode = mode;
-        }
+        public String Opcode { get; private set; } = "init";
+        public String Version { get; set; }
+        public String Mode { get; set; }
     }
 }

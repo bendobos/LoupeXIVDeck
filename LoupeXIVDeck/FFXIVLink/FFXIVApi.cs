@@ -4,8 +4,6 @@
     using System.Net.Http;
     using System.Threading.Tasks;
 
-    using Newtonsoft.Json;
-
     using StructureMap;
 
     using static Loupedeck.LoupeXIVDeckPlugin.FFXIVGameTypes;
@@ -43,7 +41,7 @@
 
         async public Task<Boolean> RunTextCommand(String command)
         {
-            var content = new StringContent(JsonConvert.SerializeObject(new FFXIVTextCommand(command)));
+            var content = new StringContent(JsonHelpers.SerializeObject(new FFXIVTextCommand(command)));
             var response = await this.client.PostAsync($"{this.baseUrl}/command", content);
 
             return response.IsSuccessStatusCode;
@@ -75,7 +73,7 @@
             var response = await this.client.GetAsync($"{this.baseUrl}/action/{type}/{id}");
             var result = await response.Content.ReadAsStringAsync();
 
-            return JsonConvert.DeserializeObject<FFXIVAction>(result);
+            return JsonHelpers.DeserializeObject<FFXIVAction>(result);
         }
 
         async public Task<Boolean> ExecuteAction(String type, Int32 id)
@@ -90,7 +88,7 @@
             var response = await this.client.GetAsync($"{this.baseUrl}/classes/{classId}");
             var result = await response.Content.ReadAsStringAsync();
 
-            return JsonConvert.DeserializeObject<FFXIVClass>(result);
+            return JsonHelpers.DeserializeObject<FFXIVClass>(result);
         }
 
         async public Task<Boolean> TriggerClass(Int32 classId)

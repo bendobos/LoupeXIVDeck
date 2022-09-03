@@ -7,7 +7,6 @@
     using System.Reactive.Subjects;
 
     using Websocket.Client;
-    using Newtonsoft.Json;
     using Loupedeck.LoupeXIVDeckPlugin.messages.inbound;
     using Loupedeck.LoupeXIVDeckPlugin.messages.outbound;
 
@@ -89,17 +88,26 @@
 
         private void SendInit(WebsocketClient client)
         {
+            var opCode = new InitOpCode
+            {
+                Version = "0.2.13",
+                Mode = "Plugin"
+            };
+
             // Sends a fake version so no errors come up
-            var initMessage = JsonConvert.SerializeObject(new InitOpCode("0.2.13", "Plugin"));
+            var initMessage = JsonHelpers.SerializeAnyObject(opCode);
+            var initMessage2 = JsonHelpers.SerializeAnyObject(opCode);
 
             System.Diagnostics.Debug.WriteLine($"## Sending Message: {initMessage}");
+            System.Diagnostics.Debug.WriteLine($"## Sending Message: {initMessage2}");
+
             var result = Task.Run(() => client.Send(initMessage));
         }
 
         private void OnInitReceive(ResponseMessage msg)
         {
             System.Diagnostics.Debug.WriteLine($"## Received initReply: {msg}");
-            var initReply = JsonConvert.DeserializeObject<InitReply>(msg.ToString());
+            var initReply = JsonHelpers.DeserializeObject<InitReply>(msg.ToString());
 
             this.apiKey = initReply.apiKey;
             System.Diagnostics.Debug.WriteLine($"## Got an API key: {this.apiKey}");

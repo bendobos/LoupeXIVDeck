@@ -34,7 +34,7 @@
             var actions = Task.Run(async () => await this._api.GetActions());
             var tree = new PluginProfileActionTree("Select Action:");
 
-            var actionsObj = JsonHelpers.DeserializeAnyObject<Dictionary<String, List<FFXIVAction>>>(actions.Result);
+            var actionsObj = JsonHelpers.DeserializeObject<Dictionary<String, List<FFXIVAction>>>(actions.Result);
 
             tree.AddLevel("Action Type");
             tree.AddLevel("Action");
