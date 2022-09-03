@@ -6,12 +6,7 @@
     {
         public class FFXIVTextCommand
         {
-            public String command;
-
-            public FFXIVTextCommand(String command)
-            {
-                this.command = command;
-            }
+            public String Command { get; set; }
         }
 
         public class FFXIVHotbarSlot

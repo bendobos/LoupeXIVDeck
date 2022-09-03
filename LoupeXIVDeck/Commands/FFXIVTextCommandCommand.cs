@@ -30,12 +30,14 @@
                 await this._api.RunTextCommand(actionParameter);
             }
         }
+
         protected override Boolean OnUnload()
         {
             this.isApplicationReadySubscription.Dispose();
 
             return base.OnUnload();
         }
+
         private void GetInstances()
         {
             var plugin = (LoupeXIVDeckPlugin)base.Plugin;

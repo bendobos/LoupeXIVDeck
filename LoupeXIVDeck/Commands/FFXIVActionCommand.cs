@@ -31,15 +31,13 @@
         }
 
         protected override PluginProfileActionData GetProfileActionData() {
-            var actions = Task.Run(async () => await this._api.GetActions());
+            var actions = Task.Run(async () => await this._api.GetActions()).Result;
             var tree = new PluginProfileActionTree("Select Action:");
-
-            var actionsObj = JsonHelpers.DeserializeObject<Dictionary<String, List<FFXIVAction>>>(actions.Result);
 
             tree.AddLevel("Action Type");
             tree.AddLevel("Action");
 
-            foreach (var actionType in actionsObj)
+            foreach (var actionType in actions)
             {
                 var node = tree.Root.AddNode(actionType.Key);
 

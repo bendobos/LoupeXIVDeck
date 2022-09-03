@@ -1,6 +1,7 @@
 ﻿namespace Loupedeck.LoupeXIVDeckPlugin
 {
     using System;
+    using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading.Tasks;
 
@@ -41,7 +42,7 @@
 
         async public Task<Boolean> RunTextCommand(String command)
         {
-            var content = new StringContent(JsonHelpers.SerializeObject(new FFXIVTextCommand(command)));
+            var content = new StringContent(JsonHelpers.SerializeAnyObject(new FFXIVTextCommand { Command = command }));
             var response = await this.client.PostAsync($"{this.baseUrl}/command", content);
 
             return response.IsSuccessStatusCode;
@@ -61,11 +62,12 @@
             return response.IsSuccessStatusCode;
         }
 
-        async public Task<String> GetActions()
+        async public Task<Dictionary<String, List<FFXIVAction>>> GetActions()
         {
             var response = await this.client.GetAsync($"{this.baseUrl}/action");
-            
-            return await response.Content.ReadAsStringAsync();
+            var responseString = await response.Content.ReadAsStringAsync();
+
+            return JsonHelpers.DeserializeObject<Dictionary<String, List<FFXIVAction>>>(responseString);
         }
 
         async public Task<FFXIVAction> GetAction(String type, Int32 id)
@@ -81,6 +83,17 @@
             var response = await this.client.PostAsync($"{this.baseUrl}/action/{type}/{id}/execute", new StringContent(""));
 
             return response.IsSuccessStatusCode;
+        }
+
+        async public Task<String> GetClasses(Boolean unlocked = false)
+        {
+            var response = await this.client.GetAsync($"{this.baseUrl}/classes{(unlocked ? "/available" : "")}");
+            var responseString = await response.Content.ReadAsStringAsync();
+
+
+            System.Diagnostics.Debug.WriteLine(responseString);
+
+            return await response.Content.ReadAsStringAsync();
         }
 
         async public Task<FFXIVClass> GetClass(Int32 classId)
