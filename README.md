@@ -22,7 +22,6 @@ LoupeXIVDeck supports the same commands as the Stream Deck plugin by @KazWolfe, 
 ## TODO / Known Issues
 
 * Add proper error and exception handling. For example, the plugin might currently crash if IDs for actions are given that are out of bounds.
-* Improve usability for Action and Class commands by using `GetClasses` and `GetActions`.
 * Changing the WebSocket port is currently not supported, so make sure you use the XIVDeck default port. 
 * Add some pictures and examples to this repo.
 

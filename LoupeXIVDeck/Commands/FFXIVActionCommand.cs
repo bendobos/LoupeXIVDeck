@@ -81,8 +81,6 @@
          */
         private FFXIVAction ActionParameterToFFXIVAction(String actionParameter)
         {
-            System.Diagnostics.Debug.WriteLine(actionParameter);
-
             var paramArray = actionParameter.Split(':');
 
             return new FFXIVAction(paramArray[0], Int32.Parse(paramArray[1]));

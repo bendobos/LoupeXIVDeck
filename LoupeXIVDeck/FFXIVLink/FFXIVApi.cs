@@ -85,15 +85,12 @@
             return response.IsSuccessStatusCode;
         }
 
-        async public Task<String> GetClasses(Boolean unlocked = false)
+        async public Task<List<FFXIVClass>> GetClasses(Boolean unlocked = false)
         {
             var response = await this.client.GetAsync($"{this.baseUrl}/classes{(unlocked ? "/available" : "")}");
             var responseString = await response.Content.ReadAsStringAsync();
 
-
-            System.Diagnostics.Debug.WriteLine(responseString);
-
-            return await response.Content.ReadAsStringAsync();
+            return JsonHelpers.DeserializeObject<List<FFXIVClass>>(responseString);
         }
 
         async public Task<FFXIVClass> GetClass(Int32 classId)

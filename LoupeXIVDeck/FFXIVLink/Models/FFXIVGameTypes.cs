@@ -41,7 +41,8 @@
 
         public class FFXIVClass
         {
-            public Int32 number;
+            public Int32? id;
+            public Int32? number;
             public String name;
 
             public String categoryName;
